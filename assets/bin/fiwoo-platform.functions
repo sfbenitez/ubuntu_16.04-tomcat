@@ -1,0 +1,47 @@
+#!/bin/bash
+
+function render-properties-template () {
+
+  WEBAPP_PROPERTIES_TEMPLATE="/src/src/main/resources/application-${ENVIRONMENT}.properties.tpl"
+  WEBAPP_PROPERTIES_FILE="/src/src/main/resources/application-${ENVIRONMENT}.properties"
+
+  cp ${WEBAPP_PROPERTIES_TEMPLATE} ${WEBAPP_PROPERTIES_FILE}
+  
+  sed -i "s%_MYSQL_HOST_%${MYSQL_HOST}%g" ${WEBAPP_PROPERTIES_FILE}
+  sed -i "s%_MYSQL_USER_%${MYSQL_USER}%g" ${WEBAPP_PROPERTIES_FILE}
+  sed -i "s%_MYSQL_PASS_%${MYSQL_PASS}%g" ${WEBAPP_PROPERTIES_FILE}
+  sed -i "s%_MYSQL_DBNAME_%${MYSQL_DBNAME}%g" ${WEBAPP_PROPERTIES_FILE}
+
+}
+
+function build-war-file () {
+
+  SRC_DIR=/src
+  cd ${SRC_DIR}
+  mvn clean
+  mvn package -DskipTests -P ${ENVIRONMENT}
+  test -e ${SRC_DIR}/unpacked-war-file/${WEB_APP} && \
+    rm -r ${SRC_DIR}/unpacked-war-file/${WEB_APP}
+  mkdir -p ${SRC_DIR}/unpacked-war-file/${WEB_APP}
+  cd ${SRC_DIR}/unpacked-war-file/${WEB_APP}
+  echo $USER $PATH
+  jar xvf ${SRC_DIR}/target/*.war
+  sudo rsync -Pav --delete ${SRC_DIR}/unpacked-war-file/${WEB_APP}/ /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/
+  cd $OLDPWD
+
+  sed -i "s%@environment@%${ENVIRONMENT}%g" /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/WEB-INF/classes/application.properties
+
+}
+
+function app-rsync () {
+
+  if [ ! "$(ls -A /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/)" ]
+  then 
+    rsync -Pav /assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/${WEB_APP}/ /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/
+    cp /src/src/main/resources/application-${ENVIRONMENT}.properties /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/WEB-INF/classes/
+    cp /src/src/main/resources/application.properties /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/WEB-INF/classes/
+  fi
+
+  sed -i "s%@environment@%${ENVIRONMENT}%g" /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/WEB-INF/classes/application.properties
+  
+}

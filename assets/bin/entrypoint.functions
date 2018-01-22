@@ -1,0 +1,73 @@
+#!/bin/bash
+set -x
+
+function create-developer-user() {
+
+  ARGS=$@
+  DEVELOPER_USER=$1
+  DEVELOPER_HOME="/home/$DEVELOPER_USER"
+  # set an unprivileged user using the host UID to avoid messing with perms
+  test -z $HOST_UID && HOST_UID=1000
+  test -z $HOST_GID && HOST_GID=1000
+  export uid=$HOST_UID gid=$HOST_GID
+  if [ -z $(grep ^$DEVELOPER_USER /etc/passwd) ]
+  then
+    echo "$DEVELOPER_USER:!:${uid}:${gid}:$DEVELOPER_USER,,,:$DEVELOPER_HOME:/bin/bash" >> /etc/passwd
+    echo "$DEVELOPER_USER:!:${uid}:" >> /etc/group
+    echo "$DEVELOPER_USER:*:99999:0:99999:7:::" >> /etc/shadow
+    echo "$DEVELOPER_USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    if [ ! -d "$DEVELOPER_HOME" ]
+    then
+      cp -a /etc/skel $DEVELOPER_HOME
+    else
+      rsync -Pavz /etc/skel/ ${DEVELOPER_HOME}/
+    fi
+    chown ${uid}:${gid} -R $DEVELOPER_HOME
+  fi
+
+}
+
+function configure-locales() {
+
+  for locale in $LOCALES
+  do
+    locale-gen $locale
+  done
+  update-locale LANG="$(echo $LOCALES | awk '{print $1}')"
+
+}
+
+function add-virtualhosts-to-etc-hosts() {
+
+  sed "s|.*127.0.0.1.*|127.0.0.1 localhost ${VIRTUAL_HOSTS}|g" /etc/hosts > /tmp/hosts
+  cp -a /tmp/hosts /etc/hosts
+
+}
+
+function configure-mysql-connection-environment() {
+
+  echo "export MYSQL_DBNAME=$MYSQL_DBNAME" > /etc/profile.d/mysql-environment.sh
+  test -z "$MYSQL_HOST" && echo "export MYSQL_HOST=localhost" >> /etc/profile.d/mysql-environment.sh
+  test -z "$MYSQL_USER" && MYSQL_USER=root && echo "export MYSQL_USER=$MYSQL_USER" >> /etc/profile.d/mysql-environment.sh
+  test ! -z "$MYSQL_PASS" && echo "export MYSQL_PASS=$MYSQL_PASS" >> /etc/profile.d/mysql-environment.sh
+
+}
+
+function link-assets() {
+
+  RSYNC_EXCLUDES="--exclude=initial.sql --exclude=data-visualization --exclude=user-auth --exclude=user-management --exclude=mysql --exclude=eureka-registry --exclude=ROOT"
+  RSYNC_OPTS="-Pav"
+
+  rsync $RSYNC_OPTS $RSYNC_EXCLUDES /assets/ /
+
+}
+
+function leave-supervisord-in-foreground() {
+
+  LOG_DIR=$(grep 'logfile.*\.log' /etc/supervisor/supervisord.conf| awk -F= '{print $2}' | awk '{print $1}' | sed 's|;||g' | xargs dirname)  
+  mkdir -p $LOG_DIR
+
+  exec supervisord -n -c /etc/supervisor/supervisord.conf
+  exec "$@"
+
+}

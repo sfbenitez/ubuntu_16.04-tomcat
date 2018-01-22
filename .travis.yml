@@ -1,0 +1,36 @@
+udo: required
+
+language: bash
+
+services:
+  - docker
+
+env:
+  - DOCKER_IMAGE=fiwoo-platform/ubuntu_16.04-tomcat
+  - MICROSERVICES=data-visualization eureka-registry user-auth user-management
+
+script:
+  - docker build -t $DOCKER_IMAGE .
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+      DOCKER_IMAGE_COMMIT=$(git log -1 --pretty=format:'%h');
+      DOCKER_IMAGE_TIMESTAMP=$(docker inspect -f '{{ .Created }}' ${DOCKER_IMAGE}|awk -F':' '{print $1$2}'|sed 's%-\|T%%g');
+      for micoservice in $MICROSERVICES; do 
+        docker tag $DOCKER_IMAGE:latest $DOCKER_IMAGE-$microservice:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
+        docker tag $DOCKER_IMAGE:latest $DOCKER_IMAGE-$microservice:latest;
+        docker push $DOCKER_IMAGE-$microservice:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
+        docker push $DOCKER_IMAGE-$microservice:latest;
+      done;
+      docker tag $DOCKER_IMAGE:latest $DOCKER_IMAGE:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
+      docker push $DOCKER_IMAGE:latest;
+      docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
+    fi
+
+notifications:
+  email:
+    recipients:
+      - emergya-integration-github@emergya.com
+    on_success: always
+    on_failure: always

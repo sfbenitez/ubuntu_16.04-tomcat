@@ -36,7 +36,7 @@ after_success:
         sudo rm -f $PWD/${microservice}/src/target/*.war;
         sudo rm -rf assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT;
         mkdir -p assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/;
-        rsync -Pavz --delete $PWD/src/src/target/ assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/;
+        rsync -Pavz --delete $PWD/${microservice}/src/target/ assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/;
         docker build -t fiwoo/$microservice:latest .;
         docker tag $microservice:latest fiwoo/$microservice:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
         docker push fiwoo/$microservice:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;

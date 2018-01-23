@@ -54,6 +54,8 @@ function app-rsync () {
     rsync -Pav /assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/${WEB_APP}/ /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/
     cp /src/src/main/resources/application-${ENVIRONMENT}.properties /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/WEB-INF/classes/
     cp /src/src/main/resources/application.properties /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/WEB-INF/classes/
+  elif [ ! -z $(ls /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/tomcat-power.gif 2>/dev/null) ]
+    rsync -Pav /assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/${WEB_APP}/ /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/
   fi
 
   sed -i "s%@environment@%${ENVIRONMENT}%g" /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/WEB-INF/classes/application.properties

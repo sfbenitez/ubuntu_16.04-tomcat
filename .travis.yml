@@ -29,7 +29,7 @@ after_success:
         git config --global url."https://github.com/".insteadOf git@github.com:;
         git clone https://github.com/fiwoo-platform/${microservice}.git ${microservice};
 
-        docker run --rm -v $PWD/${microservice}/src:/src -e ENVIRONMENT=build --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c "source /assets/bin/fiwoo-platform.functions;build-war-file" &> /dev/null;
+        docker run --rm -v $PWD/${microservice}/src:/src -e ENVIRONMENT=dev --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c "source /assets/bin/fiwoo-platform.functions;build-war-file" &> /dev/null;
 
         docker run --rm -v $PWD/${microservice}/src/target:/src/target -v $PWD/${microservice}/output-war:/output-war --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c 'cd /output-war; jar xvf /src/target/*.war' &> /dev/null;
 

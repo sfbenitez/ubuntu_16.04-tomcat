@@ -28,6 +28,7 @@ after_success:
         sudo rm -rf src;
         git config --global url."https://github.com/".insteadOf git@github.com:;
         git clone https://github.com/fiwoo-platform/${microservice}.git src;
+        ls -hl $PWD/src;
 
         docker run --rm -v $PWD/src:/src -e ENVIRONMENT=build --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c "source /assets/bin/fiwoo-platform.functions;build-war-file";
 

@@ -31,13 +31,11 @@ after_success:
 
         docker run --rm -v $PWD/${microservice}/src:/src -e ENVIRONMENT=build --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c "source /assets/bin/fiwoo-platform.functions;build-war-file" &> /dev/null;
 
-        docker run --rm -v $PWD/${microservice}/src/target:/src/target --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c 'cd /src/target; jar xvf /src/target/*.war' &> /dev/null;
+        docker run --rm -v $PWD/${microservice}/src/target:/src/target -v $PWD/${microservice}/output-war:/output-war --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c 'cd /output-war; jar xvf /src/target/*.war' &> /dev/null;
 
-        sudo rm -f $PWD/${microservice}/src/target/*.war*;
         sudo rm -rf assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT;
         mkdir -p assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/;
-        rsync -Pavz --delete $PWD/${microservice}/src/target/ assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/;
-        ls -hl;
+        rsync -Pavz --delete $PWD/${microservice}/output-war/ assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/;
         LOWCASE_MICROSERVICE=$(echo $microservice | tr '[:upper:]' '[:lower:]');
         docker build -t fiwoo/$LOWCASE_MICROSERVICE:latest .;
         docker tag fiwoo/$LOWCASE_MICROSERVICE:latest fiwoo/$LOWCASE_MICROSERVICE:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;

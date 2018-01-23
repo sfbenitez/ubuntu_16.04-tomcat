@@ -2,10 +2,17 @@
 
 function render-properties-template () {
 
-  WEBAPP_PROPERTIES_TEMPLATE="/src/src/main/resources/application-${ENVIRONMENT}.properties.tpl"
-  WEBAPP_PROPERTIES_FILE="/src/src/main/resources/application-${ENVIRONMENT}.properties"
-  EUREKA_CONFIG_TEMPLATE="/src/src/main/resources/application.yml.tpl"
-  EUREKA_CONFIG_FILE="/src/src/main/resources/application.yml"
+  if [ -e /src/src/main ]
+  then
+    TEMPLATE_DIR=/src/src/main   
+  else
+    TEMPLATE_DIR=/assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/classes
+  fi
+
+  WEBAPP_PROPERTIES_TEMPLATE="${TEMPLATE_DIR}/resources/application-${ENVIRONMENT}.properties.tpl"
+  WEBAPP_PROPERTIES_FILE="${TEMPLATE_DIR}/resources/application-${ENVIRONMENT}.properties"
+  EUREKA_CONFIG_TEMPLATE="${TEMPLATE_DIR}/resources/application.yml.tpl"
+  EUREKA_CONFIG_FILE="${TEMPLATE_DIR}/resources/application.yml"
 
   cp ${WEBAPP_PROPERTIES_TEMPLATE} ${WEBAPP_PROPERTIES_FILE}
   cp ${EUREKA_CONFIG_TEMPLATE} ${EUREKA_CONFIG_FILE}

@@ -4,15 +4,15 @@ function render-properties-template () {
 
   if [ -e /src/src/main ]
   then
-    TEMPLATE_DIR=/src/src/main   
+    TEMPLATE_DIR=/src/src/main/resources 
   else
-    TEMPLATE_DIR=/assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/classes
+    TEMPLATE_DIR=/assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/WEB-INF/classes
   fi
 
-  WEBAPP_PROPERTIES_TEMPLATE="${TEMPLATE_DIR}/resources/application-${ENVIRONMENT}.properties.tpl"
-  WEBAPP_PROPERTIES_FILE="${TEMPLATE_DIR}/resources/application-${ENVIRONMENT}.properties"
-  EUREKA_CONFIG_TEMPLATE="${TEMPLATE_DIR}/resources/application.yml.tpl"
-  EUREKA_CONFIG_FILE="${TEMPLATE_DIR}/resources/application.yml"
+  WEBAPP_PROPERTIES_TEMPLATE="${TEMPLATE_DIR}/application-${ENVIRONMENT}.properties.tpl"
+  WEBAPP_PROPERTIES_FILE="${TEMPLATE_DIR}/application-${ENVIRONMENT}.properties"
+  EUREKA_CONFIG_TEMPLATE="${TEMPLATE_DIR}/application.yml.tpl"
+  EUREKA_CONFIG_FILE="${TEMPLATE_DIR}/application.yml"
 
   cp ${WEBAPP_PROPERTIES_TEMPLATE} ${WEBAPP_PROPERTIES_FILE}
   cp ${EUREKA_CONFIG_TEMPLATE} ${EUREKA_CONFIG_FILE}

@@ -25,8 +25,7 @@ after_success:
 
       for micoservice in "$MICROSERVICES"; do
         rm -rf src;
-        unset GIT_ASKPASS;
-        git clone https://github.com/fiwoo-platform/${microservice}.git src;
+        git clone git@github.com:fiwoo-platform/${microservice}.git src;
 
         docker run --rm -v $PWD/src:/src --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c "source /assets/bin/fiwoo-platform.functions;build-war-file";
 

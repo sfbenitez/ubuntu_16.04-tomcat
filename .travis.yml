@@ -24,8 +24,8 @@ after_success:
       docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
 
       set -x;
-      for micoservice in $MICROSERVICES; do
-        rm -rf src;
+      echo $MICROSERVICES | while read micoservice; do
+        sudo rm -rf src;
         echo git clone git@github.com:fiwoo-platform/${microservice}.git src;
         git clone git@github.com:fiwoo-platform/${microservice}.git src;
 
@@ -33,7 +33,8 @@ after_success:
 
         docker run --rm -v $PROJECT_DIR/src/target:/src/target --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c 'jar xvf /src/target/*.war';
 
-        rm -f /src/target/*.war;
+        sudo rm -f /src/target/*.war;
+        sudo rm -rf assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT;
         mkdir -p assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/;
         rsync -Pavz --delete src/target/ assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/;
         docker build -t fiwoo/$microservice:latest .;

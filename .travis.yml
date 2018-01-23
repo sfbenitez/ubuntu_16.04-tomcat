@@ -37,10 +37,11 @@ after_success:
         sudo rm -rf assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT;
         mkdir -p assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/;
         rsync -Pavz --delete $PWD/${microservice}/src/target/ assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/;
-        docker build -t fiwoo/$microservice:latest .;
-        docker tag $microservice:latest fiwoo/$microservice:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
-        docker push fiwoo/$microservice:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
-        docker push fiwoo/$microservice:latest;
+        LOWCASE_MICROSERVICE=$(echo $microservice | tr tr '[:upper:]' '[:lower:]');
+        docker build -t fiwoo/$LOWCASE_MICROSERVICE:latest .;
+        docker tag $microservice:latest fiwoo/$LOWCASE_MICROSERVICE:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
+        docker push fiwoo/$LOWCASE_MICROSERVICE:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
+        docker push fiwoo/$LOWCASE_MICROSERVICE:latest;
       done;
     fi
 

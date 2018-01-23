@@ -26,11 +26,10 @@ after_success:
       set -x;
       for microservice in $(echo $MICROSERVICES); do
         sudo rm -rf src;
-        echo git clone git@github.com:fiwoo-platform/${microservice}.git src;
         git config --global url."https://github.com/".insteadOf git@github.com:;
         git clone https://github.com/fiwoo-platform/${microservice}.git src;
 
-        docker run --rm -v $PWD/src:/src --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c "source /assets/bin/fiwoo-platform.functions;build-war-file";
+        docker run --rm -v $PWD/src:/src -e ENVIRONMENT=build --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c "source /assets/bin/fiwoo-platform.functions;build-war-file";
 
         docker run --rm -v $PWD/src/target:/src/target --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c 'jar xvf /src/target/*.war';
 

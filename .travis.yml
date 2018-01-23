@@ -25,24 +25,16 @@ after_success:
 
       for micoservice in "$MICROSERVICES"; do
         rm -rf src
-        git clone git@github.com:fiwoo-platform/${microservice}.git src
+        git clone https://github.com/fiwoo-platform/${microservice}.git src
 
-        docker run --rm \
-          -v $PWD/src:/src \
-          --entrypoint=/bin/bash \
-          $DOCKER_IMAGE:latest \
-          -c "source /assets/bin/fiwoo-platform.functions;build-war-file"
+        docker run --rm -v $PWD/src:/src --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c "source /assets/bin/fiwoo-platform.functions;build-war-file";
 
-        docker run --rm \
-          -v $PROJECT_DIR/src/target:/src/target \
-          --entrypoint=/bin/bash \
-          $DOCKER_IMAGE:latest \
-          -c 'jar xvf /src/target/*.war'
+        docker run --rm -v $PROJECT_DIR/src/target:/src/target --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c 'jar xvf /src/target/*.war';
 
-        rm -f /src/target/*.war
-        mkdir -p assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/
-        rsync -Pavz --delete src/target/ assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/
-        docker build -t fiwoo-platform/$microservice:latest .
+        rm -f /src/target/*.war;
+        mkdir -p assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/;
+        rsync -Pavz --delete src/target/ assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/;
+        docker build -t fiwoo-platform/$microservice:latest .;
         docker tag $microservice:latest fiwoo-platform/$microservice:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
         docker push $microservice:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
         docker push $microservice:latest;

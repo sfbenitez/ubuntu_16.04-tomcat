@@ -8,7 +8,8 @@ services:
 env:
   global:
     - DOCKER_IMAGE=fiwoo-platform/ubuntu_16.04-tomcat
-    - MICROSERVICES="data-visualization eureka-registry user-auth user-management"
+    - MICROSERVICES="Data-Visualization eureka-registry user-auth user-management"
+    - TOMCAT_VERSION=8.5.24
 
 script:
   - docker build -t $DOCKER_IMAGE .
@@ -18,15 +19,34 @@ after_success:
       docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
       DOCKER_IMAGE_COMMIT=$(git log -1 --pretty=format:'%h');
       DOCKER_IMAGE_TIMESTAMP=$(docker inspect -f '{{ .Created }}' ${DOCKER_IMAGE}|awk -F':' '{print $1$2}'|sed 's%-\|T%%g');
-      for micoservice in "$MICROSERVICES"; do 
-        docker tag $DOCKER_IMAGE:latest $DOCKER_IMAGE-$microservice:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
-        docker tag $DOCKER_IMAGE:latest $DOCKER_IMAGE-$microservice:latest;
-        docker push $DOCKER_IMAGE-$microservice:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
-        docker push $DOCKER_IMAGE-$microservice:latest;
-      done;
       docker tag $DOCKER_IMAGE:latest $DOCKER_IMAGE:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
       docker push $DOCKER_IMAGE:latest;
       docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
+
+      for micoservice in "$MICROSERVICES"; do
+        rm -rf src
+        git clone git@github.com:fiwoo-platform/${microservice}.git src
+
+        docker run --rm \
+          -v $PWD/src:/src \
+          --entrypoint=/bin/bash \
+          $DOCKER_IMAGE:latest \
+          -c "source /assets/bin/fiwoo-platform.functions;build-war-file"
+
+        docker run --rm \
+          -v $PROJECT_DIR/src/target:/src/target \
+          --entrypoint=/bin/bash \
+          $DOCKER_IMAGE:latest \
+          -c 'jar xvf /src/target/*.war'
+
+        rm -f /src/target/*.war
+        mkdir -p assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/
+        rsync -Pavz --delete src/target/ assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/
+        docker build -t fiwoo-platform/$microservice:latest .
+        docker tag $microservice:latest fiwoo-platform/$microservice:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
+        docker push $microservice:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
+        docker push $microservice:latest;
+      done;
     fi
 
 notifications:

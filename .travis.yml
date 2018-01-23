@@ -24,8 +24,8 @@ after_success:
       docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
 
       for micoservice in "$MICROSERVICES"; do
-        rm -rf src
-        git clone https://github.com/fiwoo-platform/${microservice}.git src
+        rm -rf src;
+        git clone https://github.com/fiwoo-platform/${microservice}.git src;
 
         docker run --rm -v $PWD/src:/src --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c "source /assets/bin/fiwoo-platform.functions;build-war-file";
 

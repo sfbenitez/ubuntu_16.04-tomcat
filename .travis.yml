@@ -7,7 +7,7 @@ services:
 
 env:
   global:
-    - DOCKER_IMAGE=fiwoo-platform/ubuntu_16.04-tomcat
+    - DOCKER_IMAGE=fiwoo/ubuntu_16.04-tomcat
     - MICROSERVICES="Data-Visualization eureka-registry user-auth user-management"
     - TOMCAT_VERSION=8.5.24
 
@@ -25,6 +25,7 @@ after_success:
 
       for micoservice in "$MICROSERVICES"; do
         rm -rf src;
+        env;
         git clone https://github.com/fiwoo-platform/${microservice}.git src;
 
         docker run --rm -v $PWD/src:/src --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c "source /assets/bin/fiwoo-platform.functions;build-war-file";
@@ -34,10 +35,10 @@ after_success:
         rm -f /src/target/*.war;
         mkdir -p assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/;
         rsync -Pavz --delete src/target/ assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/;
-        docker build -t fiwoo-platform/$microservice:latest .;
-        docker tag $microservice:latest fiwoo-platform/$microservice:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
-        docker push $microservice:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
-        docker push $microservice:latest;
+        docker build -t fiwoo/$microservice:latest .;
+        docker tag $microservice:latest fiwoo/$microservice:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
+        docker push fiwoo/$microservice:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
+        docker push fiwoo/$microservice:latest;
       done;
     fi
 

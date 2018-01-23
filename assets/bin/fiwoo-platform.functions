@@ -4,14 +4,28 @@ function render-properties-template () {
 
   WEBAPP_PROPERTIES_TEMPLATE="/src/src/main/resources/application-${ENVIRONMENT}.properties.tpl"
   WEBAPP_PROPERTIES_FILE="/src/src/main/resources/application-${ENVIRONMENT}.properties"
+  EUREKA_CONFIG_TEMPLATE="/src/src/main/resources/application.yml.tpl"
+  EUREKA_CONFIG_FILE="/src/src/main/resources/application.yml"
 
   cp ${WEBAPP_PROPERTIES_TEMPLATE} ${WEBAPP_PROPERTIES_FILE}
+  cp ${EUREKA_CONFIG_TEMPLATE} ${EUREKA_CONFIG_FILE}
   
   sed -i "s%_MYSQL_HOST_%${MYSQL_HOST}%g" ${WEBAPP_PROPERTIES_FILE}
   sed -i "s%_MYSQL_USER_%${MYSQL_USER}%g" ${WEBAPP_PROPERTIES_FILE}
   sed -i "s%_MYSQL_PASS_%${MYSQL_PASS}%g" ${WEBAPP_PROPERTIES_FILE}
   sed -i "s%_MYSQL_DBNAME_%${MYSQL_DBNAME}%g" ${WEBAPP_PROPERTIES_FILE}
+  
+  sed -i "s%_MICROSERVICE_PORT_%${MICROSERVICE_PORT}%g" ${EUREKA_CONFIG_FILE}
+  sed -i "s%_MICROSERVICE_%${WEB_APP}%g" ${EUREKA_CONFIG_FILE}
+  sed -i "s%_EUREKA_VHOST_%${EUREKA_VHOST}%g" ${EUREKA_CONFIG_FILE}
+  sed -i "s%_EUREKA_PORT_%${EUREKA_PORT}%g" ${EUREKA_CONFIG_FILE}
 
+  if [[ "$WEB_APP" == "user-auth" ]]
+  then
+    sed -i "s%_DATA_VISUALIZATION_SERVICE_%${DATA_VISUALIZATION_SERVICE}%g" ${EUREKA_CONFIG_FILE}
+    sed -i "s%_USER_MANAGEMENT_SERVICE_%${USER_MANAGEMENT_SERVICE}%g" ${EUREKA_CONFIG_FILE}
+  fi
+  
 }
 
 function build-war-file () {

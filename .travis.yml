@@ -9,7 +9,7 @@ env:
   global:
     - DOCKER_IMAGE=fiwoo/ubuntu_16.04-tomcat
     - MICROSERVICES="Data-Visualization eureka-registry-service user-auth user-management"
-    - TOMCAT_VERSION=8.5.24
+    - TOMCAT_VERSION=8.5.27
 
 script:
   - docker build -t $DOCKER_IMAGE .

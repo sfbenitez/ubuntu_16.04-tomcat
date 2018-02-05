@@ -31,6 +31,7 @@ function render-properties-template () {
   then
     sed -i "s%_DATA_VISUALIZATION_SERVICE_%${DATA_VISUALIZATION_SERVICE}%g" ${EUREKA_CONFIG_FILE}
     sed -i "s%_USER_MANAGEMENT_SERVICE_%${USER_MANAGEMENT_SERVICE}%g" ${EUREKA_CONFIG_FILE}
+    sed -i "s%_GIS_SERVICE_%${GIS_SERVICE}%g" ${EUREKA_CONFIG_FILE}
   fi
   
 }

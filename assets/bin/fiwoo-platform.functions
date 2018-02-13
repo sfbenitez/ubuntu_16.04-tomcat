@@ -22,12 +22,6 @@ function render-properties-template () {
   sed -i "s%_MYSQL_PASS_%${MYSQL_PASS}%g" ${WEBAPP_PROPERTIES_FILE}
   sed -i "s%_MYSQL_DBNAME_%${MYSQL_DBNAME}%g" ${WEBAPP_PROPERTIES_FILE}
 
-  if [[ "$WEB_APP" == "gis" ]]
-  then
-    sed -i "s%_GEOSERVER_HOST_%${GEOSERVER_HOST}%g" ${WEBAPP_PROPERTIES_FILE}
-    sed -i "s%_GEOSERVER_PORT_%${GEOSERVER_PORT}%g" ${WEBAPP_PROPERTIES_FILE}
-  fi
-  
   test -z $MICROSERVICE_ACCESS_IP && MICROSERVICE_ACCESS_IP=$(hostname -i)
   
   sed -i "s%_MICROSERVICE_PORT_%${MICROSERVICE_PORT}%g" ${EUREKA_CONFIG_FILE}
@@ -42,7 +36,13 @@ function render-properties-template () {
     sed -i "s%_USER_MANAGEMENT_SERVICE_%${USER_MANAGEMENT_SERVICE}%g" ${EUREKA_CONFIG_FILE}
     sed -i "s%_GIS_SERVICE_%${GIS_SERVICE}%g" ${EUREKA_CONFIG_FILE}
   fi
-  
+
+  if [[ "$WEB_APP" == "gis" ]]
+  then
+    sed -i "s%_GEOSERVER_HOST_%${GEOSERVER_HOST}%g" ${EUREKA_CONFIG_FILE}
+    sed -i "s%_GEOSERVER_PORT_%${GEOSERVER_PORT}%g" ${EUREKA_CONFIG_FILE}
+  fi
+
 }
 
 function build-war-file () {

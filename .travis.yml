@@ -22,26 +22,6 @@ after_success:
       docker tag $DOCKER_IMAGE:latest $DOCKER_IMAGE:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
       docker push $DOCKER_IMAGE:latest;
       docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
-
-      set -x;
-      for microservice in $(echo $MICROSERVICES); do
-        sudo rm -rf ${microservice};
-        git config --global url."https://github.com/".insteadOf git@github.com:;
-        git clone https://github.com/fiwoo-platform/${microservice}.git ${microservice};
-
-        docker run --rm -v $PWD/${microservice}/src:/src -e ENVIRONMENT=dev --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c "source /assets/bin/fiwoo-platform.functions;build-war-file" &> /dev/null;
-
-        docker run --rm -v $PWD/${microservice}/src/target:/src/target -v $PWD/${microservice}/output-war:/output-war --entrypoint=/bin/bash $DOCKER_IMAGE:latest -c 'cd /output-war; jar xvf /src/target/*.war' &> /dev/null;
-
-        sudo rm -rf assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT;
-        mkdir -p assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/;
-        rsync -Pavz --delete $PWD/${microservice}/output-war/ assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/;
-        LOWCASE_MICROSERVICE=$(echo $microservice | tr '[:upper:]' '[:lower:]');
-        docker build -t fiwoo/$LOWCASE_MICROSERVICE:latest .;
-        docker tag fiwoo/$LOWCASE_MICROSERVICE:latest fiwoo/$LOWCASE_MICROSERVICE:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
-        docker push fiwoo/$LOWCASE_MICROSERVICE:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
-        docker push fiwoo/$LOWCASE_MICROSERVICE:latest;
-      done;
     fi
 
 notifications:

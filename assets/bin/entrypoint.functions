@@ -55,7 +55,7 @@ function configure-mysql-connection-environment() {
 
 function link-assets() {
 
-  RSYNC_EXCLUDES="--exclude=initial.sql --exclude=data-visualization --exclude=user-auth --exclude=user-management --exclude=mysql --exclude=eureka-registry --exclude=gis --exclude=ROOT"
+  RSYNC_EXCLUDES="--exclude=initial.sql --exclude=data-visualization --exclude=user-auth --exclude=user-management --exclude=mysql --exclude=eureka-registry --exclude=gis --exclude=opendata --exclude=ROOT"
   RSYNC_OPTS="-Pav"
 
   rsync $RSYNC_OPTS $RSYNC_EXCLUDES /assets/ /

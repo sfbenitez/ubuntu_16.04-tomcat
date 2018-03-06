@@ -35,12 +35,19 @@ function render-properties-template () {
     sed -i "s%_DATA_VISUALIZATION_SERVICE_%${DATA_VISUALIZATION_SERVICE}%g" ${EUREKA_CONFIG_FILE}
     sed -i "s%_USER_MANAGEMENT_SERVICE_%${USER_MANAGEMENT_SERVICE}%g" ${EUREKA_CONFIG_FILE}
     sed -i "s%_GIS_SERVICE_%${GIS_SERVICE}%g" ${EUREKA_CONFIG_FILE}
+    sed -i "s%_OPENDATA_SERVICE_%${OPENDATA_SERVICE}%g" ${EUREKA_CONFIG_FILE}
   fi
 
   if [[ "$WEB_APP" == "gis" ]]
   then
     sed -i "s%_GEOSERVER_HOST_%${GEOSERVER_HOST}%g" ${EUREKA_CONFIG_FILE}
     sed -i "s%_GEOSERVER_PORT_%${GEOSERVER_PORT}%g" ${EUREKA_CONFIG_FILE}
+  fi
+
+  if [[ "$WEB_APP" == "opendata" ]]
+  then
+    sed -i "s%_CKAN_HOST_%${CKAN_HOST}%g" ${EUREKA_CONFIG_FILE}
+    sed -i "s%_CKAN_PORT_%${CKAN_PORT}%g" ${EUREKA_CONFIG_FILE}
   fi
 
 }

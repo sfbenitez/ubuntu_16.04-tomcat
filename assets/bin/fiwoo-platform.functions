@@ -46,8 +46,8 @@ function render-properties-template () {
 
   if [[ "$WEB_APP" == "opendata" ]]
   then
-    sed -i "s%_CKAN_HOST_%${CKAN_HOST}%g" ${EUREKA_CONFIG_FILE}
-    sed -i "s%_CKAN_PORT_%${CKAN_PORT}%g" ${EUREKA_CONFIG_FILE}
+    sed -i "s%_CKAN_HOST_%${CKAN_HOST}%g" ${WEBAPP_PROPERTIES_FILE}
+    sed -i "s%_CKAN_PORT_%${CKAN_PORT}%g" ${WEBAPP_PROPERTIES_FILE}
   fi
 
 }

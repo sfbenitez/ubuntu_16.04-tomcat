@@ -6,7 +6,7 @@ function render-properties-template () {
   then
     TEMPLATE_DIR=/src/src/main/resources 
   else
-    TEMPLATE_DIR=/assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/WEB-INF/classes
+    TEMPLATE_DIR=/assets/opt/apache-tomcat/webapps/ROOT/WEB-INF/classes
   fi
 
   WEBAPP_PROPERTIES_TEMPLATE="${TEMPLATE_DIR}/application-${ENVIRONMENT}.properties.tpl"
@@ -75,25 +75,25 @@ function build-war-file () {
   cd ${SRC_DIR}/unpacked-war-file/${WEB_APP}
   echo $USER $PATH
   jar xvf ${SRC_DIR}/target/*.war
-  sudo rsync -Pav --delete ${SRC_DIR}/unpacked-war-file/${WEB_APP}/ /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/
+  sudo rsync -Pav --delete ${SRC_DIR}/unpacked-war-file/${WEB_APP}/ /opt/apache-tomcat/webapps/ROOT/
   cd $OLDPWD
 
-  sed -i "s%@environment@%${ENVIRONMENT}%g" /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/WEB-INF/classes/application.properties
+  sed -i "s%@environment@%${ENVIRONMENT}%g" /opt/apache-tomcat/webapps/ROOT/WEB-INF/classes/application.properties
 
 }
 
 function app-rsync () {
 
-  if [ ! "$(ls -A /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/)" ]
+  if [ ! "$(ls -A /opt/apache-tomcat/webapps/ROOT/)" ]
   then 
-    rsync -Pav /assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/${WEB_APP}/ /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/
-    cp /src/src/main/resources/application-${ENVIRONMENT}.properties /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/WEB-INF/classes/
-    cp /src/src/main/resources/application.properties /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/WEB-INF/classes/
-  elif [ ! -z $(ls /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/tomcat-power.gif 2>/dev/null) ]
+    rsync -Pav /assets/opt/apache-tomcat/webapps/${WEB_APP}/ /opt/apache-tomcat/webapps/ROOT/
+    cp /src/src/main/resources/application-${ENVIRONMENT}.properties /opt/apache-tomcat/webapps/ROOT/WEB-INF/classes/
+    cp /src/src/main/resources/application.properties /opt/apache-tomcat/webapps/ROOT/WEB-INF/classes/
+  elif [ ! -z $(ls /opt/apache-tomcat/webapps/ROOT/tomcat-power.gif 2>/dev/null) ]
   then
-    rsync -Pav --delete /assets/opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/ /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/
+    rsync -Pav --delete /assets/opt/apache-tomcat/webapps/ROOT/ /opt/apache-tomcat/webapps/ROOT/
   fi
 
-  sed -i "s%@environment@%${ENVIRONMENT}%g" /opt/apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT/WEB-INF/classes/application.properties
+  sed -i "s%@environment@%${ENVIRONMENT}%g" /opt/apache-tomcat/webapps/ROOT/WEB-INF/classes/application.properties
   
 }

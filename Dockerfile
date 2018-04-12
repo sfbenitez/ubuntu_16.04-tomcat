@@ -1,12 +1,16 @@
 FROM ubuntu:16.04
 
-ENV BUILD_TIMESTAMP 201710111342
+ARG TOMCAT_VERSION=8.5.30
+ARG MAVEN_VERSION=3.3.9
+ARG OPENJDK_VERSION=8
 
-ENV TOMCAT_VERSION 8.5.29
-ENV MAVEN_VERSION 3.3.9
-ENV OPENJDK_VERSION 8
+ENV BUILD_TIMESTAMP 201804121321
 
-ENV CATALINA_HOME /opt/apache-tomcat-${TOMCAT_VERSION}
+ENV TOMCAT_VERSION ${TOMCAT_VERSION}
+ENV MAVEN_VERSION ${MAVEN_VERSION}
+ENV OPENJDK_VERSION ${OPENJDK_VERSION}
+
+ENV CATALINA_HOME /opt/apache-tomcat
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/jre
 ENV PATH ${PATH}:${JAVA_HOME}/bin:/opt/apache-maven-${MAVEN_VERSION}/bin:${CATALINA_HOME}/bin
 
@@ -30,7 +34,8 @@ RUN mkdir -p /var/run/sshd
 ## Install Apache Tomcat
 RUN wget -q http://apache.rediris.es/tomcat/tomcat-${TOMCAT_VERSION%%.*}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz && \
     tar -xzf apache-tomcat-${TOMCAT_VERSION}.tar.gz -C /opt/ && \
-    rm -rf apache-tomcat-${TOMCAT_VERSION}.tar.gz
+    rm -rf apache-tomcat-${TOMCAT_VERSION}.tar.gz && \
+    mv /opt/apache-tomcat-${TOMCAT_VERSION} ${CATALINA_HOME}
 
 # Install Maven
 RUN wget -q http://ftp.cixug.es/apache/maven/maven-${MAVEN_VERSION%%.*}/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz && \
@@ -40,7 +45,7 @@ RUN wget -q http://ftp.cixug.es/apache/maven/maven-${MAVEN_VERSION%%.*}/${MAVEN_
 
 # Configurations for bash.
 RUN echo "export TERM=xterm" > /etc/profile.d/set-TERM.sh && \
-    echo "export PATH=${PATH}:${JAVA_HOME}/bin:/opt/apache-maven-${MAVEN_VERSION}:/opt/apache-tomcat-${TOMCAT_VERSION}"> /etc/profile.d/set-PATH.sh
+    echo "export PATH=${PATH}:${JAVA_HOME}/bin:/opt/apache-maven-${MAVEN_VERSION}:${CATALINA_HOME}"> /etc/profile.d/set-PATH.sh
 
 ADD assets /assets
 

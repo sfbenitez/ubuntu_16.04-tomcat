@@ -7,8 +7,8 @@ services:
 
 env:
   global:
-    - DOCKER_IMAGE=fiwoo/ubuntu_16.04-tomcat
-    - MICROSERVICES="Data-Visualization eureka-registry-service user-auth user-management GIS"
+    - DOCKER_IMAGE=emergya/ubuntu_16.04-tomcat
+    - MICROSERVICES=" "
     - TOMCAT_VERSION=8.5.30
 
 script:

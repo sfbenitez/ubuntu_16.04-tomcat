@@ -8,7 +8,6 @@ services:
 env:
   global:
     - DOCKER_IMAGE=emergya/ubuntu_16.04-tomcat
-    - MICROSERVICES=" "
     - TOMCAT_VERSION=8.5.30
 
 script:

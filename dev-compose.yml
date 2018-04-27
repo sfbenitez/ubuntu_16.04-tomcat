@@ -1,6 +1,6 @@
 version: '2'
 services:
-  dev-my-tomcat.example.com:
+  dev-_PROJECT_NAME_.emergyalabs.com:
     image: ${DOCKER_IMAGE}
     environment:
       - HOST_UID=${HOST_UID}

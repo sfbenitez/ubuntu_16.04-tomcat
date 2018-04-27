@@ -1,0 +1,28 @@
+version: '2'
+services:
+  stg-_PROJECT_NAME_.emergyalabs.com:
+    image: ${DOCKER_IMAGE}
+    restart: unless-stopped
+    ports:
+      - "22122:22"
+      - "8080:8080"
+      - "8009:8009"
+    environment:
+      - HOST_UID=${HOST_UID}
+      - HOST_GID=${HOST_GID}
+      - DEVELOPER_USER=${DEVELOPER_USER}
+      - LOCALES=es_ES.UTF-8 en_US.UTF-8
+      - PROJECT_NAME=${PROJECT_NAME}
+      - ENVIRONMENT=${ENVIRONMENT}
+      - ENV_VHOST=${ENV_VHOST}
+      - VIRTUAL_HOSTS=${VIRTUAL_HOSTS}
+      - TOMCAT_VERSION=${TOMCAT_VERSION}
+      - SSH_USER=${SSH_USER}
+    volumes:
+      - ${SSH_CREDENTIALS_DIR}:${SSH_CREDENTIALS_DIR}
+      - ${PROJECT_DIR}:${PROJECT_DIR}
+      - ${DATA_DIR}:/data
+      - ${DATA_DIR}/docker-containers-volumes/home/${DEVELOPER_USER}/.m2:/home/${DEVELOPER_USER}/.m2
+      - ${DATA_DIR}/docker-containers-volumes/opt/apache-tomcat-${TOMCAT_VERSION}/webapps:/opt/apache-tomcat-${TOMCAT_VERSION}/webapps
+      - ${DATA_DIR}/docker-containers-volumes/opt/apache-tomcat-${TOMCAT_VERSION}/logs:/opt/apache-tomcat-${TOMCAT_VERSION}/logs
+      - ${PROJECT_DIR}/src:/src

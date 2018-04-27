@@ -2,7 +2,7 @@
 set -x
 
 source /assets/bin/entrypoint.functions
-source /assets/bin/fiwoo-platform.functions
+source /assets/bin/entrypoint.functions-tomcat
 
 create-developer-user $DEVELOPER_USER
 
@@ -12,7 +12,9 @@ configure-mysql-connection-environment
 
 link-assets
 
-render-properties-template
+#render-properties-template
+
+#build-war-file
 
 app-rsync
 

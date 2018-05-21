@@ -1,8 +1,16 @@
 FROM ubuntu:16.04
 
+#================================
+# Build arguments
+#================================
+
 ARG TOMCAT_VERSION=8.5.30
 ARG MAVEN_VERSION=3.3.9
 ARG OPENJDK_VERSION=8
+
+#================================
+# Env arguments
+#================================
 
 ENV BUILD_TIMESTAMP 201804121321
 

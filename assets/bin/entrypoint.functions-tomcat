@@ -4,13 +4,14 @@ function render-properties-template () {
 
   if [ -e /src/src/main ]
   then
-    TEMPLATE_DIR=/src/src/main/resources 
+    TEMPLATE_DIR=/src/src/main/resources
   else
     TEMPLATE_DIR=/assets/opt/apache-tomcat/webapps/ROOT/WEB-INF/classes
   fi
 
   WEBAPP_PROPERTIES_TEMPLATE="${TEMPLATE_DIR}/application-${ENVIRONMENT}.properties.tpl"
   WEBAPP_PROPERTIES_FILE="${TEMPLATE_DIR}/application-${ENVIRONMENT}.properties"
+
   WEBAPP_CONFIG_TEMPLATE="${TEMPLATE_DIR}/application.yml.tpl"
   WEBAPP_CONFIG_FILE="${TEMPLATE_DIR}/application.yml"
   WEBAPP_ENVIRONMENT_CONFIG_TEMPLATE="${TEMPLATE_DIR}/application-${ENVIRONMENT}.yml.tpl"
@@ -20,39 +21,6 @@ function render-properties-template () {
   cp ${WEBAPP_PROPERTIES_TEMPLATE} ${WEBAPP_PROPERTIES_FILE}
   cp ${WEBAPP_CONFIG_TEMPLATE} ${WEBAPP_CONFIG_FILE}
   cp ${WEBAPP_ENVIRONMENT_CONFIG_TEMPLATE} ${WEBAPP_ENVIRONMENT_CONFIG_FILE}
-  
-  sed -i "s%_MYSQL_HOST_%${MYSQL_HOST}%g" ${WEBAPP_CONFIG_FILES}
-  sed -i "s%_MYSQL_USER_%${MYSQL_USER}%g" ${WEBAPP_CONFIG_FILES}
-  sed -i "s%_MYSQL_PASS_%${MYSQL_PASS}%g" ${WEBAPP_CONFIG_FILES}
-  sed -i "s%_MYSQL_DBNAME_%${MYSQL_DBNAME}%g" ${WEBAPP_CONFIG_FILES}
-
-  test -z $MICROSERVICE_ACCESS_IP && MICROSERVICE_ACCESS_IP=$(hostname -i)
-  
-  sed -i "s%_MICROSERVICE_PORT_%${MICROSERVICE_PORT}%g" ${WEBAPP_CONFIG_FILES}
-  sed -i "s%_MICROSERVICE_ACCESS_IP_%${MICROSERVICE_ACCESS_IP}%g" ${WEBAPP_CONFIG_FILES}
-  sed -i "s%_MICROSERVICE_%${WEB_APP}%g" ${WEBAPP_CONFIG_FILES}
-  sed -i "s%_EUREKA_VHOST_%${EUREKA_VHOST}%g" ${WEBAPP_CONFIG_FILES}
-  sed -i "s%_EUREKA_PORT_%${EUREKA_PORT}%g" ${WEBAPP_CONFIG_FILES}
-
-  if [[ "$WEB_APP" == "user-auth" ]]
-  then
-    sed -i "s%_DATA_VISUALIZATION_SERVICE_%${DATA_VISUALIZATION_SERVICE}%g" ${WEBAPP_CONFIG_FILE}
-    sed -i "s%_USER_MANAGEMENT_SERVICE_%${USER_MANAGEMENT_SERVICE}%g" ${WEBAPP_CONFIG_FILE}
-    sed -i "s%_GIS_SERVICE_%${GIS_SERVICE}%g" ${WEBAPP_CONFIG_FILE}
-    sed -i "s%_OPENDATA_SERVICE_%${OPENDATA_SERVICE}%g" ${WEBAPP_CONFIG_FILE}
-  fi
-
-  if [[ "$WEB_APP" == "gis" ]]
-  then
-    sed -i "s%_GEOSERVER_HOST_%${GEOSERVER_HOST}%g" ${WEBAPP_CONFIG_FILE}
-    sed -i "s%_GEOSERVER_PORT_%${GEOSERVER_PORT}%g" ${WEBAPP_CONFIG_FILE}
-  fi
-
-  if [[ "$WEB_APP" == "opendata" ]]
-  then
-    sed -i "s%_CKAN_HOST_%${CKAN_HOST}%g" ${WEBAPP_PROPERTIES_FILE}
-    sed -i "s%_CKAN_PORT_%${CKAN_PORT}%g" ${WEBAPP_PROPERTIES_FILE}
-  fi
 
   env | grep ^APP_ | while read var;
   do
@@ -85,7 +53,7 @@ function build-war-file () {
 function app-rsync () {
 
   if [ ! "$(ls -A /opt/apache-tomcat/webapps/ROOT/)" ]
-  then 
+  then
     rsync -Pav /assets/opt/apache-tomcat/webapps/${WEB_APP}/ /opt/apache-tomcat/webapps/ROOT/
     cp /src/src/main/resources/application-${ENVIRONMENT}.properties /opt/apache-tomcat/webapps/ROOT/WEB-INF/classes/
     cp /src/src/main/resources/application.properties /opt/apache-tomcat/webapps/ROOT/WEB-INF/classes/
@@ -95,5 +63,5 @@ function app-rsync () {
   fi
 
   sed -i "s%@environment@%${ENVIRONMENT}%g" /opt/apache-tomcat/webapps/ROOT/WEB-INF/classes/application.properties
-  
+
 }

@@ -4699,7 +4699,7 @@
   <url-pattern>/*</url-pattern>
  </web-resource-collection>
  <auth-constraint>
-  <role-name>emergya</role-name>
+  <role-name>example_auth_role</role-name>
  </auth-constraint>
 </security-constraint>
 

@@ -35,7 +35,7 @@
   them. You will also need to set the passwords to something appropriate.
 -->
 
-  <role rolename="emergya"/>
-  <user username="example_user" password="example_pass" roles="emergya"/>
+  <role rolename="example_auth_role"/>
+  <user username="example_user" password="example_pass" roles="example_auth_role"/>
 
 </tomcat-users>

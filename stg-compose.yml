@@ -23,6 +23,6 @@ services:
       - ${PROJECT_DIR}:${PROJECT_DIR}
       - ${DATA_DIR}:/data
       - ${DATA_DIR}/docker-containers-volumes/home/${DEVELOPER_USER}/.m2:/home/${DEVELOPER_USER}/.m2
-      - ${DATA_DIR}/docker-containers-volumes/opt/apache-tomcat-${TOMCAT_VERSION}/webapps:/opt/apache-tomcat-${TOMCAT_VERSION}/webapps
-      - ${DATA_DIR}/docker-containers-volumes/opt/apache-tomcat-${TOMCAT_VERSION}/logs:/opt/apache-tomcat-${TOMCAT_VERSION}/logs
+      - ${DATA_DIR}/docker-containers-volumes/opt/apache-tomcat/webapps:/opt/apache-tomcat/webapps
+      - ${DATA_DIR}/docker-containers-volumes/opt/apache-tomcat/logs:/opt/apache-tomcat/logs
       - ${PROJECT_DIR}/src:/src

@@ -131,6 +131,7 @@ Authors:
 * [Diego Martín Sanchez](https://github.com/dmsgago) (<dmsanchez@emergya.com>)
 * [Héctor Fiel Martín](https://github.com/hfiel) (<hfiel@emergya.com>)
 * [Roberto C. Morano](https://github.com/rcmorano) (<rcmorano@emergya.com>)
+* [Sergio Terán Monge](https://github.com/sergiotm87) (<steran@emergya.com>)
 
 # TODO: sort braindumped notes
 
